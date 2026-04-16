@@ -49,8 +49,36 @@ namespace FileCompare
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
                     txtLeftDir.Text = dlg.SelectedPath;
+                    //PopulateListView(lvwLeftDir, dlg.SelectedPath);
                 }
             }
         }
+        private void PopulateListView(ListView lv, string folderPath)
+        {
+            lv.BeginUpdate(); 
+            lv.Items.Clear();
+            try
+            { // 폴더(디렉터리) 먼저 추가
+                var dirs = Directory.EnumerateDirectories(folderPath)
+                      .Select(p => new DirectoryInfo(p))
+                      .OrderBy(d => d.Name);
+
+                foreach (var d in dirs)
+                {
+                    var item = new ListViewItem(d.Name);
+                    item.SubItems.Add("<DIR>");
+                    item.SubItems.Add(d.LastWriteTime.ToString("g"));
+                    lv.Items.Add(item);
+                }
+            }
+            finally
+            {
+                lv.EndUpdate();
+            }
+
+
+
+        }
+        
     }
 }
